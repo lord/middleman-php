@@ -36,6 +36,6 @@ Sometimes I have clients who want little bits of PHP interactivity on their site
 
 It will only render on pages where the URL ends in `.php`...so if you want to see `index.php`, you'll have to actually stick `index.php` in your browser.
 
-Also, right now the rendering is done through PHP's command line interface, which has [some limitations](http://www.php.net/manual/en/features.commandline.differences.php)...including no $_GET or $_POST. Hopefully this will be fixed in the future.
+Also, right now the rendering is done through PHP's command line interface, which has [some limitations](http://www.php.net/manual/en/features.commandline.differences.php)...including no `$_GET` or `$_POST`. Hopefully this will be fixed in the future.
 
 There are probably also bugs I haven't found, so if you find one, feel free to submit an issue!
