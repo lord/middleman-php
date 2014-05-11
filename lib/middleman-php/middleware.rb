@@ -13,7 +13,8 @@ module Middleman
           `echo #{Shellwords.escape(inject_params(env) + item)} | php`
         end
         headers['Content-Length'] = response.body.join.length.to_s
-        headers['Content-Type'] = 'text/html'
+        headers['Content-Type']   = 'text/html'
+        headers['Cache-Control']  = 'no-cache, no-store, must-revalidate'
       end
 
       [status, headers, response]
