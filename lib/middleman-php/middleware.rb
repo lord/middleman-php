@@ -63,6 +63,8 @@ module Middleman
         "parse_str('#{inj[:values]}', #{inj[:array]});"
       end
 
+      injections << "set_include_path(get_include_path() . PATH_SEPARATOR . '#{File.dirname(env['SCRIPT_FILENAME'])}');"
+
       "<?php #{injections.join(' ')} ?>"
     end
 
