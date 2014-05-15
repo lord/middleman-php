@@ -1,17 +1,22 @@
+require 'middleman-php/injections.rb'
+
 module Middleman
   class PhpMiddleware
 
     def initialize(app, config={})
-      @app    = app
-      @config = config
+      @injections = Middleman::Php::Injections.new(true)
+      @app        = app
+      @config     = config
+      @env        = []
     end
 
     def call(env)
       status, headers, response = @app.call(env)
 
       if env['REQUEST_PATH'] =~ /\.php$/
+        set_environment(env)
         response.body.map! do |item|
-          `echo #{Shellwords.escape(inject_params(env) + item)} | php`
+          execute_php(item)
         end
         headers['Content-Length'] = response.body.join.length.to_s
         headers['Content-Type']   = 'text/html'
@@ -23,49 +28,40 @@ module Middleman
 
     private
 
-    # @TODO: Implement the default include path pointing to the script location
+    def set_environment env
+      @env = env
+    end
 
-    # @TODO: Refactor this method to use a class for injections.
-    # The new injections class should allow different type
-    # of injections (parse_str, array_merge)
+    def execute_php source
+      inject_server
+      inject_include_path
+      inject_get
+      inject_post
+      `echo #{Shellwords.escape(@injections.generate + source)} | php`
+    end
 
-    def inject_params env
-      injections = []
-
+    def inject_server
       if @config[:environment] == :development
-        full_path = File.join(@config[:source_dir], env['PATH_INFO'])
-        env.merge!({
-          'PHP_SELF'            => env['PATH_INFO'],
-          'SCRIPT_NAME'         => full_path,
-          'SCRIPT_FILENAME'     => full_path,
-          'DOCUMENT_ROOT'       => @config[:source_dir],
-          'REQUEST_TIME'        => Time.now.to_i,
-          'REQUEST_TIME_FLOAT'  => "%.4f" % Time.now.to_f,
-          'SERVER_ADMIN'        => 'ruby@middlemanapp.com'
-        })        
-        injections << { values: URI.encode_www_form(env), array: '$_SERVER' }
+        @injections.add_server(@config[:source_dir], @env)
       end
+    end
 
-      unless env['QUERY_STRING'].empty?
-        injections << { values: env['QUERY_STRING'], array: '$_GET' }
+    def inject_include_path
+      if @config[:environment] == :development
+        @injections.add_include_path(@config[:source_dir], @env['PATH_INFO'])
       end
+    end
 
-      if env['REQUEST_METHOD'] == "POST"
-        input = env["rack.input"].read
-        unless input.length == 0
-          injections << { values: input, array: '$_POST' }
-        end
+    def inject_get
+      unless @env['QUERY_STRING'].empty?
+        @injections.add_get(@env['QUERY_STRING'])
       end
+    end
 
-      return '' unless injections.any?
-
-      injections.collect! do |inj|
-        "parse_str('#{inj[:values]}', #{inj[:array]});"
+    def inject_post
+      if @env['REQUEST_METHOD'] == "POST"
+        @injections.add_post(@env["rack.input"])
       end
-
-      injections << "set_include_path(get_include_path() . PATH_SEPARATOR . '#{File.dirname(env['SCRIPT_FILENAME'])}');"
-
-      "<?php #{injections.join(' ')} ?>"
     end
 
   end
