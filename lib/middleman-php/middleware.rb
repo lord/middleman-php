@@ -38,7 +38,7 @@ module Middleman
           'PHP_SELF'            => env['PATH_INFO'],
           'SCRIPT_NAME'         => full_path,
           'SCRIPT_FILENAME'     => full_path,
-          'DOCUMENT_ROOT'       => File.dirname(full_path),
+          'DOCUMENT_ROOT'       => @config[:source_dir],
           'REQUEST_TIME'        => Time.now.to_i,
           'REQUEST_TIME_FLOAT'  => "%.4f" % Time.now.to_f,
           'SERVER_ADMIN'        => 'ruby@middlemanapp.com'
