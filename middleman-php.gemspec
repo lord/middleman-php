@@ -1,9 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
+require "middleman-php/version"
 
 Gem::Specification.new do |s|
   s.name        = "middleman-php"
-  s.version     = "0.0.1"
+  s.version     = Middleman::Php::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Robert Lord"]
   s.email       = ["robert@lord.io"]

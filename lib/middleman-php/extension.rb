@@ -1,17 +1,21 @@
+require 'shellwords'
+
 module Middleman
   class PhpExtension < Extension
-    # option :set_blah, "default", "An example option"
 
     def initialize(app, options_hash={}, &block)
-      # Call super to build options from the options_hash
       super
-
-      require 'shellwords'
-      app.use Middleman::PhpMiddleware
-
-      app.before do
-        template_extensions :php => :html
-      end
     end
+
+    def before
+      template_extensions :php => :html
+    end
+
+    def after_configuration      
+      app.use Middleman::PhpMiddleware,
+        source_dir: app.source_dir,
+        environment: app.settings.environment
+    end
+
   end
 end

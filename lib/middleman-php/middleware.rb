@@ -1,16 +1,22 @@
+require 'middleman-php/injections.rb'
+
 module Middleman
   class PhpMiddleware
 
-    def initialize(app)
-      @app = app
+    def initialize(app, config={})
+      @injections = Middleman::Php::Injections.new(true)
+      @app        = app
+      @config     = config
+      @env        = []
     end
 
     def call(env)
       status, headers, response = @app.call(env)
 
       if env['REQUEST_PATH'] =~ /\.php$/
+        set_environment(env)
         response.body.map! do |item|
-          `echo #{Shellwords.escape(inject_params(env) + item)} | php`
+          execute_php(item)
         end
         headers['Content-Length'] = response.body.join.length.to_s
         headers['Content-Type']   = 'text/html'
@@ -22,22 +28,40 @@ module Middleman
 
     private
 
-    def inject_params env
-      injections = []
-      unless env['QUERY_STRING'].empty?
-        injections << { values: env['QUERY_STRING'], array: '$_GET' }
+    def set_environment env
+      @env = env
+    end
+
+    def execute_php source
+      inject_server
+      inject_include_path
+      inject_get
+      inject_post
+      `echo #{Shellwords.escape(@injections.generate + source)} | php`
+    end
+
+    def inject_server
+      if @config[:environment] == :development
+        @injections.add_server(@config[:source_dir], @env)
       end
-      if env['REQUEST_METHOD'] == "POST"
-        input = env["rack.input"].read
-        unless input.length == 0
-          injections << { values: input, array: '$_POST' }
-        end
+    end
+
+    def inject_include_path
+      if @config[:environment] == :development
+        @injections.add_include_path(@config[:source_dir], @env['PATH_INFO'])
       end
-      return '' unless injections.any?
-      injections.collect! do |inj|
-        "parse_str('#{inj[:values]}', #{inj[:array]});"
+    end
+
+    def inject_get
+      unless @env['QUERY_STRING'].empty?
+        @injections.add_get(@env['QUERY_STRING'])
       end
-      "<?php #{injections.join(' ')} ?>"
+    end
+
+    def inject_post
+      if @env['REQUEST_METHOD'] == "POST"
+        @injections.add_post(@env["rack.input"])
+      end
     end
 
   end
