@@ -11,7 +11,7 @@ module Middleman
       template_extensions :php => :html
     end
 
-    def after_configuration      
+    def after_configuration
       app.use Middleman::PhpMiddleware,
         source_dir: app.source_dir,
         environment: app.settings.environment
