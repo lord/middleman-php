@@ -18,7 +18,7 @@ module Middleman
         response.body.map! do |item|
           execute_php(item)
         end
-        headers['Content-Length'] = response.body.join.length.to_s
+        headers['Content-Length'] = ::Rack::Utils.bytesize(response.body.join).to_s
         headers['Content-Type']   = 'text/html'
         headers['Cache-Control']  = 'no-cache, no-store, must-revalidate'
       end
