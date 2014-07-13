@@ -32,6 +32,11 @@ module Middleman
         add_parse_str(query_string, '$_GET')
       end
 
+      def add_request
+        # Using default value "EGPCS" for php.ini directive variable_order.
+        add_raw('$_REQUEST = array_merge($_ENV, $_GET, $_POST, $_COOKIE, $_SERVER);')
+      end
+
       def set_current_directory source_dir, script_path
         dir_path = File.dirname(File.join(source_dir, script_path))
         add_raw("chdir(#{dir_path.inspect});")

@@ -38,6 +38,7 @@ module Middleman
       inject_include_path
       inject_get
       inject_post
+      inject_request
       `echo #{Shellwords.escape(@injections.generate + source)} | php`
     end
 
@@ -69,6 +70,10 @@ module Middleman
       if @env['REQUEST_METHOD'] == "POST"
         @injections.add_post(@env["rack.input"])
       end
+    end
+
+    def inject_request
+      @injections.add_request
     end
 
   end
