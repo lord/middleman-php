@@ -32,6 +32,11 @@ module Middleman
         add_parse_str(query_string, '$_GET')
       end
 
+      def set_current_directory source_dir, script_path
+        dir_path = File.dirname(File.join(source_dir, script_path))
+        add_raw("chdir(#{dir_path.inspect});")
+      end
+
       def add_include_path source_dir, path_info
         path = File.dirname(File.join(source_dir, path_info))
         add_raw("set_include_path(get_include_path() . PATH_SEPARATOR . '#{path}');")

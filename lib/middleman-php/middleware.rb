@@ -34,6 +34,7 @@ module Middleman
 
     def execute_php source
       inject_server
+      inject_script_directory
       inject_include_path
       inject_get
       inject_post
@@ -43,6 +44,12 @@ module Middleman
     def inject_server
       if @config[:environment] == :development
         @injections.add_server(@config[:source_dir], @env)
+      end
+    end
+
+    def inject_script_directory
+      if @config[:environment] == :development
+        @injections.set_current_directory(@config[:source_dir], @env['REQUEST_PATH'])
       end
     end
 
