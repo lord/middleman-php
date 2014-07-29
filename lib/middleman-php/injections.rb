@@ -39,7 +39,7 @@ module Middleman
 
       def generate
         if @injections.any?
-          injections = "<?php #{@injections.join(' ')} ?>" 
+          injections = "<?php #{@injections.join(' ')} ?>"
           if @debug
             puts '== PHP Injections:'
             puts injections
