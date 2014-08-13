@@ -4,7 +4,8 @@ module Middleman
   class PhpMiddleware
 
     def initialize(app, config={})
-      @injections = Middleman::Php::Injections.new(true)
+      @debug      = !!config[:middleman_php_debug]
+      @injections = Middleman::Php::Injections.new(@debug)
       @app        = app
       @config     = config
       @env        = []
@@ -34,15 +35,23 @@ module Middleman
 
     def execute_php source
       inject_server
+      inject_script_directory
       inject_include_path
       inject_get
       inject_post
+      inject_request
       `echo #{Shellwords.escape(@injections.generate + source)} | php`
     end
 
     def inject_server
       if @config[:environment] == :development
         @injections.add_server(@config[:source_dir], @env)
+      end
+    end
+
+    def inject_script_directory
+      if @config[:environment] == :development
+        @injections.set_current_directory(@config[:source_dir], @env['REQUEST_PATH'])
       end
     end
 
@@ -62,6 +71,10 @@ module Middleman
       if @env['REQUEST_METHOD'] == "POST"
         @injections.add_post(@env["rack.input"])
       end
+    end
+
+    def inject_request
+      @injections.add_request
     end
 
   end
