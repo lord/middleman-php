@@ -24,7 +24,7 @@ module Middleman
       def add_post rack_input
         input = rack_input.read
         unless input.length == 0
-          add_parse_str(input, '$_POST')
+          add_parse_str(input.gsub("'", "\\\\'"), '$_POST')
         end
       end
 
