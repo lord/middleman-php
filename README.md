@@ -1,15 +1,23 @@
 # middleman-php
 
-**middleman-php** lets [Middleman](https://github.com/middleman/middleman)'s server render PHP. So your `source/kittens.php` file will actually render kittens, and not a mess of `<?php` open tags.
+**middleman-php** allows [Middleman][mm_repo] to execute PHP scripts. So your `source/kittens.php` file will actually render kittens, and not a mess of `<?php` open tags.
 
 Sometimes I have clients who want little bits of PHP interactivity on their site, but I still want to use Middleman to generate the PHP pages. This makes it so you don't have to `middleman build` and then upload to your site just to get a preview.
 
+[![Gem Version](https://badge.fury.io/rb/middleman-php.svg)][gem]
+
 ## Installation
 
-In your Middleman project's `Gemfile`, add:
+Add the extension to your `Gemfile`:
 
 ```ruby
 gem 'middleman-php'
+```
+
+And then run:
+
+```
+bundle install
 ```
 
 ## Configuration
@@ -32,7 +40,7 @@ Here is the list of settings with the default values:
 
 ```ruby
 activate :php do |config|
-  config.show_debug = true # Output debug info to console
+  config.show_debug = false # Output debug info to console
 end
 ```
 
@@ -46,8 +54,10 @@ It will however, let you do fancy stuff like files ending in `.php.erb`... so yo
 
 There are probably also bugs I haven't found, so if you find one, feel free to submit an issue!
 
-## Credits
+## License
 
-Also thanks to [Mariano](https://github.com/mcavallo), who contributed a significant chunk of code to get $_GET, $_POST, and other PHP global request variables working.
+Copyright (c) 2014-2015 Robert Lord. MIT Licensed, see [LICENSE] for details.
 
-Copyright (c) 2014-2015 Robert Lord.
+[mm_repo]: https://github.com/middleman/middleman
+[gem]: https://rubygems.org/gems/middleman-php
+[LICENSE]: https://github.com/lord/middleman-php/blob/master/LICENSE.md
