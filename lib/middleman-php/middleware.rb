@@ -4,7 +4,7 @@ module Middleman
   class PhpMiddleware
 
     def initialize(app, config={})
-      @debug      = !!config[:middleman_php_debug]
+      @debug      = !!config[:show_debug]
       @injections = Middleman::Php::Injections.new(@debug)
       @app        = app
       @config     = config
