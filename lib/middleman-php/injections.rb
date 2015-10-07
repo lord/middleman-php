@@ -47,6 +47,10 @@ module Middleman
         add_raw("set_include_path(get_include_path() . PATH_SEPARATOR . '#{path}');")
       end
 
+      def add_default_session
+        add_raw("session_id('middleman-php-session');")
+      end
+
       def generate
         if @injections.any?
           injections = "<?php #{@injections.join(' ')} ?>"

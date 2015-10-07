@@ -40,6 +40,7 @@ module Middleman
       inject_get
       inject_post
       inject_request
+      inject_default_session
       `echo #{Shellwords.escape(@injections.generate + source)} | php`
     end
 
@@ -75,6 +76,10 @@ module Middleman
 
     def inject_request
       @injections.add_request
+    end
+
+    def inject_default_session
+      @injections.add_default_session
     end
 
   end
