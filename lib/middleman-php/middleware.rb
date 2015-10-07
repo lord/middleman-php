@@ -29,11 +29,11 @@ module Middleman
 
     private
 
-    def set_environment env
+    def set_environment(env)
       @env = env
     end
 
-    def execute_php source
+    def execute_php(source)
       inject_server
       inject_script_directory
       inject_include_path
