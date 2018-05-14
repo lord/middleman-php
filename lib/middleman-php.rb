@@ -1,4 +1,7 @@
-require 'middleman-php/middleware'
-require 'middleman-php/extension'
+require 'middleman-core'
 
-Middleman::PhpExtension.register(:php)
+::Middleman::Extensions.register(:php) do
+  require 'middleman-php/middleware'
+  require 'middleman-php/extension'
+  ::Middleman::PhpExtension
+end

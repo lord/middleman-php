@@ -22,7 +22,7 @@ module Middleman
     def options_for_middleware
       options.to_h.merge(
         source_dir: app.source_dir,
-        environment: app.settings.environment
+        environment: app.config.environment
       )
     end
 
